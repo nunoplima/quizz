@@ -2,6 +2,10 @@ import React from "react";
 
 class StartMenu extends React.Component {
   
+  componentDidMount = () => {
+    this.props.stopGame();  
+  }
+
   handleDifficultyChoice = (e) => {
     // li values are integers...
     this.props.setDifficulty(e.target.getAttribute("value"));

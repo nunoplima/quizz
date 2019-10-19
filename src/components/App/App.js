@@ -15,8 +15,10 @@ class App extends React.Component {
     }
   }
 
-  componentDidMount = async () => {
-    // getQuestions(this.state.difficulty);
+  stopGame = () => {
+    this.setState({
+      isGameLive: false
+    })
   }
 
   setDifficulty = (difficulty) => {
@@ -36,14 +38,14 @@ class App extends React.Component {
   render() {
     return (
       <BrowserRouter>
-        {/* since this.props.history is undefined in App */}
-        {/* Push is a bool, when true, redirecting will push a new entry onto the history INSTEAD of replacing the current one. */}
         <h1>WWTBAM</h1>  
         <div className="App">
-          {this.state.isGameLive ? <Redirect push to={{ pathname: "/game", questionsArr: this.state.questionsArr }}/> : null}
+          {/* since this.props.history is undefined in App */}
+          {/* Push is a bool, when true, redirecting will push a new entry onto the history INSTEAD of replacing the current one. */}
+          {this.state.isGameLive ? <Redirect push to={{ pathname: "/game", questionsArr: this.state.questionsArr, currentQuestionIdx: 0 }}/> : null}
           <Switch>
-            <Route path="/" exact render={() => <StartMenu setDifficulty={this.setDifficulty} startGame={this.startGame} /> } />
-            <Route path="/game"exact component={Game} />
+            <Route path="/" exact render={() => <StartMenu setDifficulty={this.setDifficulty} startGame={this.startGame} stopGame={this.stopGame} /> } />
+            {this.state.isGameLive ? <Route path="/game"exact component={Game} /> : <h1>Not found</h1>}
           </Switch>
         </div>
       </BrowserRouter>
