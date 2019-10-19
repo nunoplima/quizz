@@ -1,12 +1,6 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
-
-// category: "Entertainment: Music"
-// correct_answer: "Toto"
-// difficulty: "easy"
-// incorrect_answers: (3) ["Foreigner", "Steely Dan", "Journey"]
-// question: "Who had a 1983 hit with the song &#039;Africa&#039;?"
-// type: "multiple"
+import Answers from "../Answers/Answers";
 
 class Game extends React.Component {
   constructor(props) {
@@ -19,7 +13,7 @@ class Game extends React.Component {
     }
   }
 
-  handleAnswerChoice = (e) => {
+  setAnswerChoice = (e) => {
     // if answer is wrong
     if (e.target.innerText !== this.state.correctAnswer) {
       this.setState(state => {
@@ -40,17 +34,6 @@ class Game extends React.Component {
     }
   };
 
-  renderAnswers = () => {
-    const currentQuestion = this.state.questionsArr[this.state.currentQuestionIdx];
-    const answers = [...currentQuestion.incorrect_answers, currentQuestion.correct_answer];
-    // Add randomness to answers order
-    const randomNum = Math.floor(Math.random() * 100);
-    return answers.map((answer, idx) => {
-      const randomAnswer = answers[(idx + randomNum) % answers.length];
-      return <div key={idx} onClick={this.handleAnswerChoice}>{randomAnswer}</div>
-    })
-  }
-
   render() {
     const currentQuestion = this.state.questionsArr[this.state.currentQuestionIdx];
                           
@@ -60,7 +43,7 @@ class Game extends React.Component {
         <div>
           <h3>{currentQuestion.question.replace(/&quot;/g, '"').replace(/&#039;/g, "'").replace(/&eacute;/g, "é")}</h3>
           <div>
-            {this.renderAnswers()}
+            <Answers {...this.state} setAnswerChoice={this.setAnswerChoice}/>
           </div>
         </div>
       </>
