@@ -1,8 +1,12 @@
 import React from "react";
 import Answer from "../Answer/Answer";
+import Timer from "../Timer/Timer";
 
 class Answers extends React.Component {
-  
+  componentDidMount = () => {
+    console.log("Answers did mount");
+  }
+
   handleAnswerChoice = (e) => {
     this.props.setAnswerChoice(e);
   };
@@ -20,9 +24,12 @@ class Answers extends React.Component {
 
   render() {
     return (
-      <ul onClick={this.handleAnswerChoice}>
-        {this.renderAnswers()}
-      </ul>
+      <>
+        <ul onClick={this.handleAnswerChoice}>
+          {this.renderAnswers()}
+        </ul>
+        {/* <Timer key={Math.random() * 100} setAnswerChoice={this.props.setAnswerChoice} /> */}
+      </>
     )
   }
 }

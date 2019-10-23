@@ -1,54 +1,42 @@
 import React from "react";
-import { withRouter } from "react-router-dom";
 import Answers from "../Answers/Answers";
+import Timer from "../Timer/Timer";
 
 class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      questionsArr: this.props.location.questionsArr, 
-      currentQuestionIdx: this.props.location.currentQuestionIdx, 
-      correctAnswer: this.props.location.questionsArr[this.props.location.currentQuestionIdx].correct_answer,
-      lifesLeft: 3
+      
     }
   }
 
-  setAnswerChoice = (e) => {
-    // if answer is wrong
-    if (e.target.innerText !== this.state.correctAnswer) {
-      this.setState(state => {
-        return { 
-          lifesLeft: state.lifesLeft - 1, 
-          currentQuestionIdx: state.currentQuestionIdx + 1,
-          correctAnswer: state.questionsArr[state.currentQuestionIdx + 1].correct_answer
-        };
-      })
-    // if answer is right
-    } else {
-      this.setState((state) => {
-        return { 
-          currentQuestionIdx: state.currentQuestionIdx + 1, 
-          correctAnswer: state.questionsArr[state.currentQuestionIdx + 1].correct_answer
-        }
-      })
-    }
-  };
-
   render() {
-    const currentQuestion = this.state.questionsArr[this.state.currentQuestionIdx];
+    // console.log(this.state.questionsArr[this.state.currentQuestionIdx])
+    const currentQuestion = this.props.questionsArr[this.props.currentQuestionIdx];
+    // const currentQuestion = this.props.location.questionsArr[this.props.location.currentQuestionIdx];
                           
     return (
       <>
         <h1>Game ON</h1>
         <div>
-          <h3>{currentQuestion.question.replace(/&quot;/g, '"').replace(/&#039;/g, "'").replace(/&eacute;/g, "é")}</h3>
-          <div>
-            <Answers {...this.state} setAnswerChoice={this.setAnswerChoice}/>
-          </div>
+        <h3>#{this.props.currentQuestionIdx + 1} {currentQuestion.question.replace(/&amp;/g, "&")
+          .replace(/&deg;/g, "°")
+          .replace(/&quot;/g, '"')
+          .replace(/&#039;/g, "'")
+          .replace(/&eacute;/g, "é")}
+        </h3>
+        <div>
+          {/* <Answers {...this.state} setAnswerChoice={this.setAnswerChoice}/> */}
+          {/* <Answers {...this.state} setAnswerChoice={this.props.setAnswerChoice}/> */}
+          <Answers {...this.props} setAnswerChoice={this.props.setAnswerChoice} />
+          
+        </div>
+        {/* <Timer setAnswerChoicee={this.setAnswerChoice} /> */}
+          <Timer timer={this.props.timer} />
         </div>
       </>
     )
   }
 }
 
-export default withRouter(Game);
+export default Game;
