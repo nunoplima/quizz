@@ -1,9 +1,16 @@
 import React from "react";
 
-const Answer = ({ randomAnswer }) => {
-  return (
-    <li>{randomAnswer}</li>
-  )
+class Answer extends React.Component {
+
+  // shouldComponentUpdate(nextProps) {
+  //   return this.props.currentQuestion !== nextProps.currentQuestion;
+  // }
+
+  render() {
+    return (
+      <li>{this.props.answer}</li>
+    )
+  }
 };
 
 export default Answer;

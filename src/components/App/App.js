@@ -14,87 +14,77 @@ class App extends React.Component {
       isGameLive: false,
       questionsArr: [], 
       currentQuestionIdx: 0,
-      lifesLeft: 3,
-      timer: 5
+      lifesLeft: 3
     }
   }
 
-  
   setAnswerChoice = (e) => {
-    clearInterval(this.intervalId);
-    const correctAnswer = this.state.questionsArr[this.state.currentQuestionIdx].correct_answer;
     // if time expires...
-    if (e === "not an event...") {
-      this.intervalId = setInterval(this.startTimer, 1000);
+    if (e === "time expired") {
       return this.setState(state => {
         return { 
           lifesLeft: state.lifesLeft - 1, 
           currentQuestionIdx: state.currentQuestionIdx + 1,
         };
-      });   
+      }); 
     }
     // if answer is wrong
+    const correctAnswer = this.state.questionsArr[this.state.currentQuestionIdx].correct_answer;
     const eTarget = e.target;
     if (eTarget.innerText !== correctAnswer) {
       eTarget.style.backgroundColor = "red";
       setTimeout(() => {
         eTarget.style.backgroundColor = "white";
-        this.intervalId = setInterval(this.startTimer, 1000);
-        this.setState(state => {
+        this.setState(prevState => {
           return { 
-            lifesLeft: state.lifesLeft - 1, 
-            currentQuestionIdx: state.currentQuestionIdx + 1,
+            lifesLeft: prevState.lifesLeft - 1, 
+            currentQuestionIdx: prevState.currentQuestionIdx + 1,
           };
         });   
       }, 1500);
-      // if answer is right
+    // if answer is right
     } else {
       eTarget.style.backgroundColor = "green";
       setTimeout(() => {
-        this.intervalId = setInterval(this.startTimer, 1000);
-        this.setState((state) => {
+        this.setState((prevState) => {
           eTarget.style.backgroundColor = "white";
           return { 
-            currentQuestionIdx: state.currentQuestionIdx + 1, 
+            currentQuestionIdx: prevState.currentQuestionIdx + 1,
           };
         });
       }, 1500)
     }
   };
-  
+
   stopGame = () => {
     this.setState({
       isGameLive: false
     })
   }
-  
+
   setDifficulty = (difficulty) => {
     this.setState({
       difficulty: difficulty
     })
   };
-  
+
   startGame = async () => {
-    const questionsArr = await getQuestions(this.state.difficulty);
+    let questionsArr = await getQuestions(this.state.difficulty);
+    // rearrange arr and randomize questions
+    const newQuestionsArr = questionsArr.map(questionObj => {
+      const answers = [...questionObj.incorrect_answers, questionObj.correct_answer]; 
+      for (let i = 0; i < answers.length; i++) {
+        const randomIdx = Math.floor(Math.random() * answers.length) % 10;
+        [answers[i], answers[randomIdx]] = [answers[randomIdx], answers[i]];
+      }
+      return { answers: answers, question: questionObj.question, correct_answer: questionObj.correct_answer }
+    });
     this.setState({
       isGameLive: true, 
-      questionsArr: questionsArr,
+      questionsArr: newQuestionsArr,
     });
-    this.intervalId = setInterval(this.startTimer, 1000);
   }
-  
-  startTimer = () => {
-    const newTimer = this.state.timer - 1;
-    if (newTimer >= 0) {
-      this.setState(prevState => {
-        return { timer: prevState.timer - 1 }
-      });
-    } else {
-      this.setAnswerChoice("not an event...");
-      clearInterval(this.intervalId);
-    }
-  };
-  
+
   render() {
     return (
       <BrowserRouter>
@@ -106,9 +96,8 @@ class App extends React.Component {
           
           {this.state.isGameLive && <Game questionsArr={this.state.questionsArr} 
             currentQuestionIdx={this.state.currentQuestionIdx} 
-            setAnswerChoice={this.setAnswerChoice} 
-            timer={this.state.timer} />
-            }
+            setAnswerChoice={this.setAnswerChoice}
+            /> }
           <Switch>
             {/* <Route path="/" exact render={() => <StartMenu setDifficulty={this.setDifficulty} startGame={this.startGame} stopGame={this.stopGame} /> } /> */}
             {!this.state.isGameLive && <StartMenu setDifficulty={this.setDifficulty} startGame={this.startGame} stopGame={this.stopGame} />}

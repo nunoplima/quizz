@@ -3,51 +3,38 @@ import React from "react";
 class Timer extends React.Component {
   constructor(props) {
     super(props);
-    // this.state = {
-    //   timer: 5,
-    //   // clocking: this.props.clocking
-    // }
+    this.state = {
+      timer: 5,
+    }
   }
- 
-  // componentDidUpdate = () => {
-  //   console.log("Timer updated");
-  //   if (!this.state.clocking && this.state.timer === 0) {
-  //     this.setState({ timer: 3, clocking: true });
-  //     this.intervalId = setInterval(this.startTimer, 1000);
-  //   } 
-  // }
 
-  // componentDidMount = () => {
-  //   console.log("Timer mounted");
-  //   this.intervalId = setInterval(this.startTimer, 1000);
-  //   // this.setState({ clocking: true, timer: 3 });
-  // }
+  componentDidMount() {
+    this.intervalId = setInterval(this.startTimer, 1000);
+  }
   
-  // componentWillUnmount = () => {
-  //   clearInterval(this.intervalId);
-  //   console.log("Unmounting timer")
-  // }
+  componentWillUnmount() {
+    clearInterval(this.intervalId);
+  }
 
-
-  // startTimer = () => {
-  //   // if (this.state.clocking) {
-  //     const newTimer = this.state.timer - 1;
-  //     if (newTimer >= 0) {
-  //       this.setState(prevState => {
-  //         return { timer: prevState.timer - 1, clocking: true }
-  //       });
-  //     } else {
-  //       this.props.setAnswerChoice("not an event...");
-  //       this.setState({ clocking: false })
-  //       clearInterval(this.intervalId);
-  //     }
-  //   // }
-  // };
+  startTimer = () => {
+    if (this.props.clearInt) {
+      return clearInterval(this.intervalId);
+    }
+    const newTimer = this.state.timer - 1;
+    if (newTimer >= 0) {
+      this.setState(prevState => {
+        return { timer: prevState.timer - 1 }
+      });
+    } else {
+      // time ended without a response
+      this.props.setAnswerChoice("time expired");
+    }
+  };
 
   render() {
     return (
       <>
-        <p>{this.props.timer}</p>
+        <p>{this.state.timer}</p>
       </>
     )
   }

@@ -3,22 +3,25 @@ import Answer from "../Answer/Answer";
 import Timer from "../Timer/Timer";
 
 class Answers extends React.Component {
-  componentDidMount = () => {
-    console.log("Answers did mount");
+  constructor(props) {
+    super(props);
+    this.state = {
+      clearInt: false
+    }
   }
 
   handleAnswerChoice = (e) => {
+    // so that the timer stop at user click
+    this.setState({ clearInt: true });
     this.props.setAnswerChoice(e);
   };
   
   renderAnswers = () => {
-    const currentQuestion = this.props.questionsArr[this.props.currentQuestionIdx];
-    const answers = [...currentQuestion.incorrect_answers, currentQuestion.correct_answer];
-    // Add randomness to answers order
-    const randomNum = Math.floor(Math.random() * 100);
+    const currentQuestionObj = this.props.questionsArr[this.props.currentQuestionIdx];
+    const answers = currentQuestionObj.answers;
+    console.log(currentQuestionObj.correct_answer)
     return answers.map((answer, idx) => {
-      const randomAnswer = answers[(idx + randomNum) % answers.length];
-      return <Answer key={idx} randomAnswer={randomAnswer} />
+      return <Answer key={idx} answer={answer} />
     })
   }
 
@@ -28,7 +31,7 @@ class Answers extends React.Component {
         <ul onClick={this.handleAnswerChoice}>
           {this.renderAnswers()}
         </ul>
-        {/* <Timer key={Math.random() * 100} setAnswerChoice={this.props.setAnswerChoice} /> */}
+        <Timer clearInt={this.state.clearInt} setAnswerChoice={this.props.setAnswerChoice} />
       </>
     )
   }
