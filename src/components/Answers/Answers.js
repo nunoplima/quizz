@@ -32,6 +32,7 @@ class Answers extends React.Component {
           {this.renderAnswers()}
         </ul>
         <Timer clearInt={this.state.clearInt} setAnswerChoice={this.props.setAnswerChoice} />
+        <button onClick={() => this.props.stopGame()}>Quit</button>
       </>
     )
   }

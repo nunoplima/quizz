@@ -1,9 +1,9 @@
 import React from "react";
 import "./App.css";
-import {  BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
+// import {  BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import StartMenu from "../StartMenu/StartMenu";
 import Game from "../Game/Game";
-// import GameOver from "../GameOver/GameOver";
+import GameOver from "../GameOver/GameOver";
 import { getQuestions } from "../../util/getQuestionsHelper";
 
 class App extends React.Component {
@@ -14,7 +14,8 @@ class App extends React.Component {
       isGameLive: false,
       questionsArr: [], 
       currentQuestionIdx: 0,
-      lifesLeft: 3
+      lifesLeft: 3,
+      dollars: 0
     }
   }
 
@@ -39,6 +40,8 @@ class App extends React.Component {
           return { 
             lifesLeft: prevState.lifesLeft - 1, 
             currentQuestionIdx: prevState.currentQuestionIdx + 1,
+            // game is live if are questions left or lifes are greater than 0
+            isGameLive: (prevState.currentQuestionIdx + 1 <= prevState.questionsArr.length) && (prevState.lifesLeft - 1 > 0 ? true : false) 
           };
         });   
       }, 1500);
@@ -50,6 +53,9 @@ class App extends React.Component {
           eTarget.style.backgroundColor = "white";
           return { 
             currentQuestionIdx: prevState.currentQuestionIdx + 1,
+            dollars: prevState.dollars === 0 ? 100 : prevState.dollars * 2,
+            // game is live if are questions left
+            isGameLive: prevState.currentQuestionIdx + 1 < prevState.questionsArr.length ? true : false 
           };
         });
       }, 1500)
@@ -58,7 +64,11 @@ class App extends React.Component {
 
   stopGame = () => {
     this.setState({
-      isGameLive: false
+      isGameLive: false,
+      questionsArr: [], 
+      currentQuestionIdx: 0,
+      lifesLeft: 3,
+      dollars: 0
     })
   }
 
@@ -86,25 +96,31 @@ class App extends React.Component {
   }
 
   render() {
+    const { isGameLive, questionsArr, currentQuestionIdx, lifesLeft, dollars } = this.state;
+
     return (
-      <BrowserRouter>
-        <h1>WWTBAM</h1>  
+      // <BrowserRouter>
         <div className="App">
-          {/* since this.props.history is undefined in App */}
-          {/* Push is a bool, when true, redirecting will push a new entry onto the history INSTEAD of replacing the current one. */}
-          {/* {this.state.isGameLive ? <Redirect push to={{ pathname: "/game", questionsArr: this.state.questionsArr, currentQuestionIdx: this.state.currentQuestionIdx, setAnswerChoice: this.setAnswerChoice }}/> : null} */}
-          
-          {this.state.isGameLive && <Game questionsArr={this.state.questionsArr} 
-            currentQuestionIdx={this.state.currentQuestionIdx} 
-            setAnswerChoice={this.setAnswerChoice}
-            /> }
-          <Switch>
+        <h1>WWTBAM</h1>  
+          {/* <Switch>   */}
+            {/* since this.props.history is undefined in App */}
+            {/* Push is a bool, when true, redirecting will push a new entry onto the history INSTEAD of replacing the current one. */}
+            {/* {this.state.isGameLive ? <Redirect push to={{ pathname: "/game", questionsArr: this.state.questionsArr, currentQuestionIdx: this.state.currentQuestionIdx, setAnswerChoice: this.setAnswerChoice }}/> : null} */}
+            {(!isGameLive && questionsArr.length > 0) &&  <GameOver dollars={dollars} stopGame={this.stopGame} />}
+            {(!isGameLive && questionsArr.length === 0) &&  <StartMenu setDifficulty={this.setDifficulty} startGame={this.startGame} stopGame={this.stopGame} />}
+            {/* {!this.state.isGameLive && <StartMenu setDifficulty={this.setDifficulty} startGame={this.startGame} stopGame={this.stopGame} />} */}
+            {isGameLive && <Game questionsArr={questionsArr} 
+              currentQuestionIdx={currentQuestionIdx} 
+              setAnswerChoice={this.setAnswerChoice}
+              lifesLeft={lifesLeft}
+              dollars={dollars}
+              stopGame={this.stopGame}
+              /> }
             {/* <Route path="/" exact render={() => <StartMenu setDifficulty={this.setDifficulty} startGame={this.startGame} stopGame={this.stopGame} /> } /> */}
-            {!this.state.isGameLive && <StartMenu setDifficulty={this.setDifficulty} startGame={this.startGame} stopGame={this.stopGame} />}
-            {this.state.isGameLive ? <Route path="/game"exact component={Game} /> : <h1>Not found</h1>}
-          </Switch>
+            {/* {this.state.isGameLive ? <Route path="/game"exact component={Game} /> : <h1>Not found</h1>} */}
+          {/* </Switch>         */}
         </div>
-      </BrowserRouter>
+      // </BrowserRouter>
     );
   }
 }
